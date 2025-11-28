@@ -1,49 +1,64 @@
 <template>
-  <div class="container">
-    <h2 class="title">Crypto Price List</h2>
+  <div class="page-wrapper">
 
-    <button @click="fetchData" class="btn-refresh">
-      Refresh Data
-    </button>
+    <!-- HEADER -->
+    <header class="header">
+      <h1 class="logo">Dinar Crypto Dashboard</h1>
+    </header>
 
-    <!-- Loading -->
-    <div v-if="loading" class="loading">Loading...</div>
+    <!-- MAIN CONTENT -->
+    <main class="container">
+      <h2 class="title">Crypto Price List</h2>
 
-    <!-- Content -->
-    <div v-else>
-      <div class="grid">
-        <div 
-          v-for="coin in paginatedData" 
-          :key="coin.id" 
-          class="card"
-        >
-          <p><strong>Rank:</strong> {{ coin.rank }}</p>
-          <p><strong>Name:</strong> {{ coin.name }} ({{ coin.symbol }})</p>
-          <p><strong>Price:</strong> ${{ coin.price_usd }}</p>
+      <button @click="fetchData" class="btn-refresh">
+        Refresh Data
+      </button>
+
+      <!-- Loading -->
+      <div v-if="loading" class="loading">Loading...</div>
+
+      <!-- Content -->
+      <div v-else>
+        <div class="grid">
+          <div 
+            v-for="coin in paginatedData" 
+            :key="coin.id" 
+            class="card"
+          >
+            <p><strong>Rank:</strong> {{ coin.rank }}</p>
+            <p><strong>Name:</strong> {{ coin.name }} ({{ coin.symbol }})</p>
+            <p><strong>Price:</strong> ${{ coin.price_usd }}</p>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <button 
+            class="page-btn" 
+            :disabled="page === 1"
+            @click="page--"
+          >
+            Prev
+          </button>
+
+          <span class="page-number">Page {{ page }} / {{ totalPages }}</span>
+
+          <button 
+            class="page-btn" 
+            :disabled="page === totalPages"
+            @click="page++"
+          >
+            Next
+          </button>
         </div>
       </div>
+    </main>
 
-      <!-- Pagination -->
-      <div class="pagination">
-        <button 
-          class="page-btn" 
-          :disabled="page === 1"
-          @click="page--"
-        >
-          Prev
-        </button>
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>© 2025 Dinar Crypto App — All Rights Reserved</p>
+    </footer>
 
-        <span class="page-number">Page {{ page }} / {{ totalPages }}</span>
-
-        <button 
-          class="page-btn" 
-          :disabled="page === totalPages"
-          @click="page++"
-        >
-          Next
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -54,7 +69,7 @@ export default {
       coins: [],
       loading: false,
       page: 1,
-      perPage: 4  // <--- PAGINATION 4 CARD PER HALAMAN
+      perPage: 4  // default mobile
     };
   },
 
@@ -81,11 +96,26 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    setPerPageByDevice() {
+      if (window.innerWidth >= 1024) {
+        this.perPage = 14; // desktop
+      } else {
+        this.perPage = 2; // mobile/tablet
+      }
     }
   },
 
   mounted() {
+    this.setPerPageByDevice();
     this.fetchData();
+
+    window.addEventListener("resize", this.setPerPageByDevice);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.setPerPageByDevice);
   }
-}
+};
 </script>
