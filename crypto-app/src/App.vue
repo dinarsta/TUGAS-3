@@ -1,25 +1,47 @@
 <template>
-  <div style="max-width: 450px; margin: auto; padding: 20px; font-family: Arial;">
-    <h2 style="text-align:center;">Crypto Price List</h2>
+  <div class="container">
+    <h2 class="title">Crypto Price List</h2>
 
-    <button 
-      @click="fetchData" 
-      style="width: 100%; padding: 10px; margin-bottom: 15px; cursor:pointer;"
-    >
+    <button @click="fetchData" class="btn-refresh">
       Refresh Data
     </button>
 
-    <div v-if="loading">Loading...</div>
+    <!-- Loading -->
+    <div v-if="loading" class="loading">Loading...</div>
 
+    <!-- Content -->
     <div v-else>
-      <div 
-        v-for="coin in coins" 
-        :key="coin.id" 
-        style="border:1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 8px;"
-      >
-        <p><strong>Rank:</strong> {{ coin.rank }}</p>
-        <p><strong>Name:</strong> {{ coin.name }} ({{ coin.symbol }})</p>
-        <p><strong>Price USD:</strong> ${{ coin.price_usd }}</p>
+      <div class="grid">
+        <div 
+          v-for="coin in paginatedData" 
+          :key="coin.id" 
+          class="card"
+        >
+          <p><strong>Rank:</strong> {{ coin.rank }}</p>
+          <p><strong>Name:</strong> {{ coin.name }} ({{ coin.symbol }})</p>
+          <p><strong>Price:</strong> ${{ coin.price_usd }}</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button 
+          class="page-btn" 
+          :disabled="page === 1"
+          @click="page--"
+        >
+          Prev
+        </button>
+
+        <span class="page-number">Page {{ page }} / {{ totalPages }}</span>
+
+        <button 
+          class="page-btn" 
+          :disabled="page === totalPages"
+          @click="page++"
+        >
+          Next
+        </button>
       </div>
     </div>
   </div>
@@ -30,8 +52,21 @@ export default {
   data() {
     return {
       coins: [],
-      loading: false
+      loading: false,
+      page: 1,
+      perPage: 4  // <--- PAGINATION 4 CARD PER HALAMAN
     };
+  },
+
+  computed: {
+    totalPages() {
+      return Math.ceil(this.coins.length / this.perPage);
+    },
+
+    paginatedData() {
+      const start = (this.page - 1) * this.perPage;
+      return this.coins.slice(start, start + this.perPage);
+    }
   },
 
   methods: {
@@ -42,7 +77,7 @@ export default {
         const result = await response.json();
         this.coins = result.data;
       } catch (error) {
-        console.error("Gagal mengambil data:", error);
+        console.error("Gagal fetch data:", error);
       } finally {
         this.loading = false;
       }
@@ -52,5 +87,5 @@ export default {
   mounted() {
     this.fetchData();
   }
-};
+}
 </script>
