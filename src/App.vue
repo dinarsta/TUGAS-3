@@ -3,7 +3,7 @@
 
     <!-- HEADER -->
     <header class="header">
-      <h1 class="logo">Dinar Crypto Dashboard</h1>
+      <h1 class="logo">dinarsta Crypto Dashboard</h1>
     </header>
 
     <!-- MAIN CONTENT -->
@@ -56,7 +56,7 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-      <p>© 2025 Dinar Crypto App — All Rights Reserved</p>
+      <p>© 2025 dinarsta Crypto App — All Rights Reserved</p>
     </footer>
 
   </div>
@@ -100,7 +100,7 @@ export default {
 
     setPerPageByDevice() {
       if (window.innerWidth >= 1024) {
-        this.perPage = 14; // desktop
+        this.perPage = 10; // desktop
       } else {
         this.perPage = 2; // mobile/tablet
       }
